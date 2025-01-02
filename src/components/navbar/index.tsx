@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import styles from './index.module.css';
 import Menu from './components/menu';
+
 const NavBar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -19,7 +20,7 @@ const NavBar: React.FC = () => {
         className={`${styles.navbarContainer} ${isOpen ? styles.isOpen : ''}`}>
         <div className={styles.avatarContainer} onClick={openMenu}>
           <div className={styles.avatar}>
-            <img src="images/asuka.jpg"></img>
+            <img src="avatar.jpg"></img>
           </div>
         </div>
         {isOpen && (
