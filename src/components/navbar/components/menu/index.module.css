@@ -1,0 +1,42 @@
+.menuContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.modelContainer {
+  width: 100%;
+  height: 3rem;
+  border-radius: 2rem;
+  background-color: var(--background-color);
+  padding: 0.5rem;
+  display: flex;
+  position: relative;
+}
+
+.modelItem {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--text-color);
+  transition: all 0.3s linear;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.modelItem.active {
+  color: var(--main-color);
+  border-radius: 2rem;
+}
+
+.modelLine {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: var(--text-color);
+  border-radius: inherit;
+  transition: all 0.3s linear;
+}

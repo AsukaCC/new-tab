@@ -1,0 +1,22 @@
+/* 在 :root 中声明亮暗主题的颜色变量 */
+/* 亮主题 */
+:root {
+  --background-color: #f8f8f8;
+  --main-color: #ffffff;
+  --secondary-color: #6f6f6f;
+  --text-color: #171717;
+  --shadow-color1: #0000001a;
+  --shadow-color2: #0000000d;
+}
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #09090b;
+    --main-color: #18181b;
+    --text-color: #ededed;
+    --secondary-color: #a0a0a0;
+    --shadow-color1: hwb(0 100% 0% / 0.102);
+    --shadow-color2: #ffffff0d;
+  }
+}
