@@ -31,14 +31,13 @@ jobs:
         run: npm install
 
       - name: Build React App
-        run: npm run build # Ensure this is the correct build command for your project
+        run: npm build
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist # Change this to the folder where the build output is generated
+          path: ./dist
 
-  # Deployment job
   deploy:
     environment:
       name: github-pages
