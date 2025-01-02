@@ -25,18 +25,24 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'
+          cache: 'npm'  # If you are using npm, ensure cache is used correctly
 
+      # Check if package-lock.json exists, then install dependencies
       - name: Install Dependencies
-        run: npm install
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci  # Use `npm ci` to install dependencies from package-lock.json
+          else
+            npm install  # Fallback to `npm install` if package-lock.json does not exist
+          fi
 
       - name: Build React App
-        run: npm build
+        run: npm run build  # Ensure this is the correct build command for your project
 
       - name: Upload build artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: ./dist  # Change this to the folder where the build output is generated
 
   deploy:
     environment:
