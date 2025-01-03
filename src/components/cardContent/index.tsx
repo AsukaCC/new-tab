@@ -8,14 +8,14 @@ const CardContent: React.FC = () => {
   );
 
   const showPopularMain = () => {
-    console.log(model);
+    console.log('');
   };
 
   const initList: Website[] = [
     {
       name: '掘金',
       url: 'https://juejin.cn',
-      favicon: 'https://www.google.com/favicon.ico',
+      favicon: 'https://juejin.cn/favicon.ico',
     },
     {
       name: 'GPT',
