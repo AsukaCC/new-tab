@@ -1,15 +1,14 @@
 {
   "manifest_version": 3,
-  "name": "My Chrome Extension",
+  "name": "New Tab",
   "version": "1.0",
-  "description": "A simple Chrome extension",
+  "description": "A simple new tab page",
   "icons": {
     "16": "favicon.ico",
     "48": "favicon.ico",
     "128": "favicon.ico"
   },
-  "permissions": ["storage", "activeTab", "scripting"],
-  "host_permissions": ["https://*/*", "http://*/*"],
+  "permissions": ["storage"],
   "chrome_url_overrides": {
     "newtab": "index.html"
   }
