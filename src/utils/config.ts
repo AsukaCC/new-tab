@@ -1,10 +1,11 @@
-import { Config } from "../types";
+import { UserConfig } from '@/types';
 
-const config: Config = {
-    model: 0,
-    theme: 'system',
-    lang: 'zh-CN',
-    backgroundType: 0,
-}
+const config: UserConfig = {
+  model: 0,
+  theme: 'system',
+  lang: 'zh-CN',
+  backgroundType: 0,
+  isDirectLink: true,
+};
 
-export default config
+export default config;

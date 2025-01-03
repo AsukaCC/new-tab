@@ -1,8 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Model } from '@/types';
 import styles from './index.module.css';
-
+import { setModel } from '@/redux/slice/configSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '@/redux';
 const Menu: React.FC = () => {
+  const dispatch = useDispatch();
+  const model = useSelector((state: RootState) => state.config.model); // 获取当前 model
+
   const models: Model[] = [
     {
       name: '标准',
@@ -14,30 +19,12 @@ const Menu: React.FC = () => {
     },
   ];
 
-  const [currentModelIndex, setCurrentModelIndex] = useState(0);
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    const userConfig = localStorage.getItem('userConfig');
-    if (userConfig) {
-      const config = JSON.parse(userConfig);
-      setCurrentModelIndex(config.model);
-    } else {
-      console.log('init fail');
-      setCurrentModelIndex(0);
-    }
-    setIsReady(true);
-  }, []);
+  const [currentModelIndex, setCurrentModelIndex] = useState(model);
 
   const handleModelChange = (index: number) => {
-    setCurrentModelIndex(index);
-    const userConfig = localStorage.getItem('userConfig');
-    if (userConfig) {
-      const config = JSON.parse(userConfig);
-      const model = models[index];
-      config.model = model.value;
-      localStorage.setItem('userConfig', JSON.stringify(config));
-    }
+    const modelValue = models[index].value;
+    setCurrentModelIndex(modelValue);
+    dispatch(setModel(modelValue));
   };
 
   return (
@@ -53,14 +40,12 @@ const Menu: React.FC = () => {
             {model.name}
           </div>
         ))}
-        {isReady && (
-          <div
-            className={styles.modelLine}
-            style={{
-              left: `${(currentModelIndex / models.length) * 100}%`,
-              width: `${100 / models.length}%`,
-            }}></div>
-        )}
+        <div
+          className={styles.modelLine}
+          style={{
+            left: `${(currentModelIndex / models.length) * 100}%`,
+            width: `${100 / models.length}%`,
+          }}></div>
       </div>
     </div>
   );

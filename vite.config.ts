@@ -8,7 +8,7 @@ export default defineConfig({
   // base: '/new-tab/', // 发布github page时的路径
   resolve: {
     alias: {
-      '@/': path.resolve(__dirname, './src/**'),
+      '@': path.resolve(__dirname, './src'), // 将 @ 映射到 src 目录
     },
   },
 });

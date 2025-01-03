@@ -1,18 +1,33 @@
 import { useState, useRef } from 'react';
 import styles from './index.module.css';
 import Engines, { EnginesRef } from './components/engines';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/redux';
 
 const Search: React.FC = () => {
   const [searchContent, setSearchContent] = useState('');
+
+  const isDirectLink = useSelector(
+    (state: RootState) => state.config.isDirectLink
+  ); // 获取当前 model
 
   const enginesRef = useRef<EnginesRef>(null);
 
   const search = () => {
     if (enginesRef) {
       const query = encodeURIComponent(searchContent);
-      window.open(
-        `${enginesRef.current?.currentEngine.url.replace('{query}', query)}`
-      );
+
+      if (isDirectLink) {
+        window.location.href = `${enginesRef.current?.currentEngine.url.replace(
+          '{query}',
+          query
+        )}`;
+        return;
+      } else {
+        window.open(
+          `${enginesRef.current?.currentEngine.url.replace('{query}', query)}`
+        );
+      }
     }
   };
 
