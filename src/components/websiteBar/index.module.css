@@ -1,0 +1,152 @@
+.websiteBar {
+  z-index: 5;
+  display: none;
+  position: fixed;
+  right: 1rem;
+  top: 1rem;
+  padding: 1rem;
+  width: 25rem;
+  height: calc(100% - 2rem);
+  border-radius: 20px;
+  background-color: var(--main-color);
+  box-shadow: inset 0 0 0 1px var(--shadow-color1),
+    inset 0 0 0 2px var(--shadow-color2);
+  flex-direction: column;
+}
+
+.wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 4;
+  background-color: transparent;
+}
+
+.topBar {
+  width: 100%;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.closeButton {
+  width: 3rem;
+  height: 3rem;
+  cursor: pointer;
+}
+
+.websiteBar.isOpen {
+  display: flex;
+}
+
+@media screen and (max-width: 480px) {
+  .websiteBar.isOpen {
+    width: calc(100vw - 2rem);
+    height: calc(100vh - 2rem);
+  }
+}
+
+.content {
+  flex: 1;
+  display: flex;
+}
+
+.tagsContainer {
+  width: 5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.5rem;
+  gap: 0.5rem;
+  background-color: var(--background-color);
+  border-radius: 20px;
+}
+
+.tagItem {
+  width: 100%;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.tagItem.active,
+.tagItem:hover {
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+}
+
+.websiteContainer {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  overflow-y: auto;
+}
+
+.websiteItem {
+  width: 100%;
+  height: auto;
+  padding: 0.5rem;
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  border-radius: 10px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.websiteItemIcon {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  flex-shrink: 0;
+  overflow: hidden;
+}
+
+.websiteItemContent {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.websiteItemName {
+  width: 100%;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.websiteItemDescription {
+  width: 100%;
+  font-size: 0.8rem;
+  margin: 0;
+}
+
+.websiteItemName,
+.websiteItemDescription {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.addButton {
+  width: 5rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  cursor: pointer;
+  background-color: var(--secondary-color);
+  color: var(--main-color);
+}
