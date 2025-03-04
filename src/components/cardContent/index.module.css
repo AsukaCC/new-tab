@@ -75,6 +75,33 @@
   animation: fadeIn 0.3s ease-out;
 }
 
+/* 拖拽相关样式 */
+.websiteItem.dragging {
+  opacity: 0.4;
+  z-index: 10;
+  cursor: grabbing;
+  transform: scale(1.05);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.websiteItem.dragOver {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+  position: relative;
+}
+
+.websiteItem.dragOver::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px dashed var(--text-color);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -123,6 +150,15 @@
   }
 
   .websiteContainer:active {
+    cursor: grabbing;
+  }
+
+  /* 编辑模式下的拖拽提示 */
+  .websiteItem[draggable="true"] {
+    cursor: grab;
+  }
+
+  .websiteItem[draggable="true"]:active {
     cursor: grabbing;
   }
 }
@@ -207,4 +243,10 @@
 
 .favicon:hover {
   transform: scale(1.2);
+}
+
+/* 拖拽时不应该放大图标 */
+.websiteItem.dragging .favicon:hover,
+.websiteItem.dragOver .favicon:hover {
+  transform: scale(1);
 }

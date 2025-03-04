@@ -27,7 +27,6 @@ const NavBar: React.FC = () => {
     const localTheme = config.theme || systemTheme;
     document.documentElement.setAttribute('data-theme', localTheme);
     setIsDarkMode(localTheme == 'dark');
-    dispatch(setTheme(localTheme));
   };
 
   const changeTheme = () => {

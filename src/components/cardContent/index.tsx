@@ -1,7 +1,7 @@
 import styles from './index.module.css';
 import { RootState } from '@/redux';
 import { useSelector, useDispatch } from 'react-redux';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { setWebsiteList } from '@/redux/slice/configSlice';
 import { setShowPage } from '@/redux/slice/stateSlice';
 
@@ -18,6 +18,14 @@ const CardContent: React.FC = () => {
   const touchStartX = useRef<number>(0);
   const touchEndX = useRef<number>(0);
   const MIN_SWIPE_DISTANCE = 50; // 最小滑动距离
+
+  // 添加拖拽相关状态
+  const [draggedItem, setDraggedItem] = useState<{ pageIndex: number; itemIndex: number } | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<{ pageIndex: number; itemIndex: number } | null>(null);
+  // 触摸拖拽相关状态
+  const [touchDragging, setTouchDragging] = useState(false);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const touchedElement = useRef<HTMLElement | null>(null);
 
   const openWebsite = (url: string) => {
     if (isEditing) return;
@@ -55,11 +63,94 @@ const CardContent: React.FC = () => {
 
   // 处理触摸开始
   const handleTouchStart = (e: React.TouchEvent) => {
+    // 记录水平滑动的起始位置
     touchStartX.current = e.touches[0].clientX;
+
+    // 如果不在编辑模式，不处理拖拽
+    if (!isEditing) return;
+
+    // 获取被触摸的元素
+    const element = e.currentTarget as HTMLElement;
+    touchedElement.current = element;
+
+    // 设置长按定时器，长按后开始拖拽
+    const timer = setTimeout(() => {
+      if (element && element.dataset && element.dataset.pageIndex && element.dataset.itemIndex) {
+        const pageIndex = parseInt(element.dataset.pageIndex);
+        const itemIndex = parseInt(element.dataset.itemIndex);
+
+        // 设置拖拽状态
+        setDraggedItem({ pageIndex, itemIndex });
+        setTouchDragging(true);
+
+        // 添加视觉反馈
+        element.classList.add(styles.dragging);
+      }
+    }, 500); // 500ms长按触发拖拽
+
+    setLongPressTimer(timer);
+  };
+
+  // 处理触摸移动
+  const handleTouchMove = (e: React.TouchEvent) => {
+    // 如果不在拖拽状态，取消长按定时器
+    if (!touchDragging && longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+
+    // 如果不在拖拽状态，不处理
+    if (!touchDragging || !draggedItem) return;
+
+    // 阻止默认滚动行为
+    e.preventDefault();
+
+    // 获取当前触摸位置
+    const touchX = e.touches[0].clientX;
+    const touchY = e.touches[0].clientY;
+
+    // 获取所有可拖放的元素
+    const droppableElements = document.querySelectorAll(`.${styles.websiteItem}[data-page-index="${showPage}"]`);
+
+    // 查找当前触摸位置下的元素
+    let targetElement: Element | null = null;
+
+    droppableElements.forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      if (
+        touchX >= rect.left &&
+        touchX <= rect.right &&
+        touchY >= rect.top &&
+        touchY <= rect.bottom
+      ) {
+        targetElement = element;
+      }
+    });
+
+    // 如果找到目标元素，更新拖拽目标
+    if (targetElement) {
+      const htmlElement = targetElement as HTMLElement;
+      if (htmlElement.dataset && htmlElement.dataset.pageIndex && htmlElement.dataset.itemIndex) {
+        const pageIndex = parseInt(htmlElement.dataset.pageIndex);
+        const itemIndex = parseInt(htmlElement.dataset.itemIndex);
+
+        // 更新拖拽目标
+        setDragOverItem({ pageIndex, itemIndex });
+
+        // 移除所有元素的dragOver类
+        droppableElements.forEach((el) => {
+          (el as HTMLElement).classList.remove(styles.dragOver);
+        });
+
+        // 给当前目标添加dragOver类
+        htmlElement.classList.add(styles.dragOver);
+      }
+    }
   };
 
   // 处理触摸结束
   const handleTouchEnd = (e: React.TouchEvent) => {
+    // 处理水平滑动翻页
     touchEndX.current = e.changedTouches[0].clientX;
     const swipeDistance = touchEndX.current - touchStartX.current;
 
@@ -71,6 +162,49 @@ const CardContent: React.FC = () => {
         dispatch(setShowPage(showPage + 1));
       }
     }
+
+    // 清除长按定时器
+    if (longPressTimer) {
+      clearTimeout(longPressTimer);
+      setLongPressTimer(null);
+    }
+
+    // 如果在拖拽状态，处理排序
+    if (touchDragging && draggedItem && dragOverItem) {
+      // 确保在同一页内拖拽
+      if (draggedItem.pageIndex === dragOverItem.pageIndex && draggedItem.pageIndex === showPage) {
+        const list = JSON.parse(JSON.stringify(localWebsiteList));
+        const currentPage = list[showPage];
+
+        // 获取被拖拽的项
+        const draggedItemContent = currentPage[draggedItem.itemIndex];
+
+        // 从原位置删除
+        currentPage.splice(draggedItem.itemIndex, 1);
+
+        // 插入到新位置
+        currentPage.splice(dragOverItem.itemIndex, 0, draggedItemContent);
+
+        // 更新状态
+        dispatch(setWebsiteList(list));
+      }
+    }
+
+    // 重置拖拽状态
+    if (touchedElement.current) {
+      touchedElement.current.classList.remove(styles.dragging);
+    }
+
+    // 移除所有元素的dragOver类
+    const droppableElements = document.querySelectorAll(`.${styles.websiteItem}`);
+    droppableElements.forEach((el) => {
+      (el as HTMLElement).classList.remove(styles.dragOver);
+    });
+
+    setTouchDragging(false);
+    setDraggedItem(null);
+    setDragOverItem(null);
+    touchedElement.current = null;
   };
 
   // 处理鼠标滑动
@@ -94,6 +228,70 @@ const CardContent: React.FC = () => {
     }
   };
 
+  // 拖拽开始
+  const handleDragStart = (e: React.DragEvent, pageIndex: number, itemIndex: number) => {
+    if (!isEditing) return;
+    setDraggedItem({ pageIndex, itemIndex });
+    // 设置拖拽时的半透明效果
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '0.4';
+    }
+    // 设置拖拽图像（可选）
+    if (e.dataTransfer) {
+      e.dataTransfer.effectAllowed = 'move';
+    }
+  };
+
+  // 拖拽结束
+  const handleDragEnd = (e: React.DragEvent) => {
+    if (!isEditing) return;
+    // 恢复透明度
+    if (e.currentTarget instanceof HTMLElement) {
+      e.currentTarget.style.opacity = '1';
+    }
+
+    // 如果有拖拽项和目标项，执行排序
+    if (draggedItem && dragOverItem) {
+      // 确保在同一页内拖拽
+      if (draggedItem.pageIndex === dragOverItem.pageIndex && draggedItem.pageIndex === showPage) {
+        const list = JSON.parse(JSON.stringify(localWebsiteList));
+        const currentPage = list[showPage];
+
+        // 获取被拖拽的项
+        const draggedItemContent = currentPage[draggedItem.itemIndex];
+
+        // 从原位置删除
+        currentPage.splice(draggedItem.itemIndex, 1);
+
+        // 插入到新位置
+        currentPage.splice(dragOverItem.itemIndex, 0, draggedItemContent);
+
+        // 更新状态
+        dispatch(setWebsiteList(list));
+      }
+    }
+
+    // 重置拖拽状态
+    setDraggedItem(null);
+    setDragOverItem(null);
+  };
+
+  // 拖拽经过
+  const handleDragOver = (e: React.DragEvent) => {
+    if (!isEditing) return;
+    e.preventDefault(); // 必须阻止默认行为才能触发drop
+    if (e.dataTransfer) {
+      e.dataTransfer.dropEffect = 'move';
+    }
+  };
+
+  // 拖拽进入
+  const handleDragEnter = (e: React.DragEvent, pageIndex: number, itemIndex: number) => {
+    if (!isEditing) return;
+    e.preventDefault();
+    setDragOverItem({ pageIndex, itemIndex });
+  };
+
   return (
     <>
       <div
@@ -114,9 +312,25 @@ const CardContent: React.FC = () => {
               }}>
               {pageList.map((item, index) => (
                 <div
-                  className={styles.websiteItem}
+                  className={`${styles.websiteItem} ${
+                    draggedItem && draggedItem.pageIndex === pageIndex &&
+                    draggedItem.itemIndex === index ? styles.dragging : ''
+                  } ${
+                    dragOverItem && dragOverItem.pageIndex === pageIndex &&
+                    dragOverItem.itemIndex === index ? styles.dragOver : ''
+                  }`}
                   key={index}
-                  onClick={() => openWebsite(item.url)}>
+                  data-page-index={pageIndex}
+                  data-item-index={index}
+                  onClick={() => openWebsite(item.url)}
+                  draggable={isEditing}
+                  onDragStart={(e) => handleDragStart(e, pageIndex, index)}
+                  onDragEnd={handleDragEnd}
+                  onDragOver={handleDragOver}
+                  onDragEnter={(e) => handleDragEnter(e, pageIndex, index)}
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}>
                   {isEditing && (
                     <svg
                       className={`icon ${styles.editIcon}`}
