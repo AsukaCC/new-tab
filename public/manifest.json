@@ -1,11 +1,11 @@
 {
   "name": "New Tab - Easy Search",
   "version": "1.0.3",
-  "description": "Base Level Extension",
+  "description": "A new tab with easy search",
   "manifest_version": 3,
   "icons": {
-    "48": "favicon.ico",
-    "128": "favicon.ico"
+    "48": "favicon.png",
+    "128": "favicon.png"
   },
   "chrome_url_overrides": {
     "newtab": "index.html"
