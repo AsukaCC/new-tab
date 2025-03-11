@@ -1,0 +1,22 @@
+{
+  "name": "New Tab - Easy Search",
+  "version": "1.0.3",
+  "description": "Base Level Extension",
+  "manifest_version": 3,
+  "icons": {
+    "48": "favicon.ico",
+    "128": "favicon.ico"
+  },
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "oauth2": {
+    "client_id": "",
+    "scopes": ["https://www.googleapis.com/auth/userinfo.profile"]
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["storage", "identity", "search"],
+  "host_permissions": ["https://api.jiangcheng.site/api/*"]
+}
