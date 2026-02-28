@@ -20,11 +20,19 @@ const CardContent: React.FC = () => {
   const MIN_SWIPE_DISTANCE = 50; // 最小滑动距离
 
   // 添加拖拽相关状态
-  const [draggedItem, setDraggedItem] = useState<{ pageIndex: number; itemIndex: number } | null>(null);
-  const [dragOverItem, setDragOverItem] = useState<{ pageIndex: number; itemIndex: number } | null>(null);
+  const [draggedItem, setDraggedItem] = useState<{
+    pageIndex: number;
+    itemIndex: number;
+  } | null>(null);
+  const [dragOverItem, setDragOverItem] = useState<{
+    pageIndex: number;
+    itemIndex: number;
+  } | null>(null);
   // 触摸拖拽相关状态
   const [touchDragging, setTouchDragging] = useState(false);
-  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(null);
+  const [longPressTimer, setLongPressTimer] = useState<NodeJS.Timeout | null>(
+    null
+  );
   const touchedElement = useRef<HTMLElement | null>(null);
 
   const openWebsite = (url: string) => {
@@ -75,7 +83,12 @@ const CardContent: React.FC = () => {
 
     // 设置长按定时器，长按后开始拖拽
     const timer = setTimeout(() => {
-      if (element && element.dataset && element.dataset.pageIndex && element.dataset.itemIndex) {
+      if (
+        element &&
+        element.dataset &&
+        element.dataset.pageIndex &&
+        element.dataset.itemIndex
+      ) {
         const pageIndex = parseInt(element.dataset.pageIndex);
         const itemIndex = parseInt(element.dataset.itemIndex);
 
@@ -110,7 +123,9 @@ const CardContent: React.FC = () => {
     const touchY = e.touches[0].clientY;
 
     // 获取所有可拖放的元素
-    const droppableElements = document.querySelectorAll(`.${styles.websiteItem}[data-page-index="${showPage}"]`);
+    const droppableElements = document.querySelectorAll(
+      `.${styles.websiteItem}[data-page-index="${showPage}"]`
+    );
 
     // 查找当前触摸位置下的元素
     let targetElement: Element | null = null;
@@ -130,7 +145,11 @@ const CardContent: React.FC = () => {
     // 如果找到目标元素，更新拖拽目标
     if (targetElement) {
       const htmlElement = targetElement as HTMLElement;
-      if (htmlElement.dataset && htmlElement.dataset.pageIndex && htmlElement.dataset.itemIndex) {
+      if (
+        htmlElement.dataset &&
+        htmlElement.dataset.pageIndex &&
+        htmlElement.dataset.itemIndex
+      ) {
         const pageIndex = parseInt(htmlElement.dataset.pageIndex);
         const itemIndex = parseInt(htmlElement.dataset.itemIndex);
 
@@ -172,7 +191,10 @@ const CardContent: React.FC = () => {
     // 如果在拖拽状态，处理排序
     if (touchDragging && draggedItem && dragOverItem) {
       // 确保在同一页内拖拽
-      if (draggedItem.pageIndex === dragOverItem.pageIndex && draggedItem.pageIndex === showPage) {
+      if (
+        draggedItem.pageIndex === dragOverItem.pageIndex &&
+        draggedItem.pageIndex === showPage
+      ) {
         const list = JSON.parse(JSON.stringify(localWebsiteList));
         const currentPage = list[showPage];
 
@@ -196,7 +218,9 @@ const CardContent: React.FC = () => {
     }
 
     // 移除所有元素的dragOver类
-    const droppableElements = document.querySelectorAll(`.${styles.websiteItem}`);
+    const droppableElements = document.querySelectorAll(
+      `.${styles.websiteItem}`
+    );
     droppableElements.forEach((el) => {
       (el as HTMLElement).classList.remove(styles.dragOver);
     });
@@ -229,7 +253,11 @@ const CardContent: React.FC = () => {
   };
 
   // 拖拽开始
-  const handleDragStart = (e: React.DragEvent, pageIndex: number, itemIndex: number) => {
+  const handleDragStart = (
+    e: React.DragEvent,
+    pageIndex: number,
+    itemIndex: number
+  ) => {
     if (!isEditing) return;
     setDraggedItem({ pageIndex, itemIndex });
     // 设置拖拽时的半透明效果
@@ -253,7 +281,10 @@ const CardContent: React.FC = () => {
     // 如果有拖拽项和目标项，执行排序
     if (draggedItem && dragOverItem) {
       // 确保在同一页内拖拽
-      if (draggedItem.pageIndex === dragOverItem.pageIndex && draggedItem.pageIndex === showPage) {
+      if (
+        draggedItem.pageIndex === dragOverItem.pageIndex &&
+        draggedItem.pageIndex === showPage
+      ) {
         const list = JSON.parse(JSON.stringify(localWebsiteList));
         const currentPage = list[showPage];
 
@@ -286,7 +317,11 @@ const CardContent: React.FC = () => {
   };
 
   // 拖拽进入
-  const handleDragEnter = (e: React.DragEvent, pageIndex: number, itemIndex: number) => {
+  const handleDragEnter = (
+    e: React.DragEvent,
+    pageIndex: number,
+    itemIndex: number
+  ) => {
     if (!isEditing) return;
     e.preventDefault();
     setDragOverItem({ pageIndex, itemIndex });
@@ -313,11 +348,17 @@ const CardContent: React.FC = () => {
               {pageList.map((item, index) => (
                 <div
                   className={`${styles.websiteItem} ${
-                    draggedItem && draggedItem.pageIndex === pageIndex &&
-                    draggedItem.itemIndex === index ? styles.dragging : ''
+                    draggedItem &&
+                    draggedItem.pageIndex === pageIndex &&
+                    draggedItem.itemIndex === index
+                      ? styles.dragging
+                      : ''
                   } ${
-                    dragOverItem && dragOverItem.pageIndex === pageIndex &&
-                    dragOverItem.itemIndex === index ? styles.dragOver : ''
+                    dragOverItem &&
+                    dragOverItem.pageIndex === pageIndex &&
+                    dragOverItem.itemIndex === index
+                      ? styles.dragOver
+                      : ''
                   }`}
                   key={index}
                   data-page-index={pageIndex}
@@ -344,7 +385,7 @@ const CardContent: React.FC = () => {
                   )}
                   <div className={styles.favicon}>
                     <img
-                      src={`https://api.jiangcheng.site/api/favicon?url=${item.url}`}
+                      src={`https://api.asukaforever.cc/api/websiteIcon?url=${item.url}`}
                       alt={`${item.name} favicon`}
                     />
                   </div>

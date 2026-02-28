@@ -100,7 +100,7 @@ const WebsiteBar: React.FC = () => {
                 <div className={styles.websiteItem} key={index}>
                   <div className={styles.websiteItemIcon}>
                     <img
-                      src={`https://api.jiangcheng.site/api/favicon?url=${website.url}`}
+                      src={`https://api.asukaforever.cc/api/websiteIcon?url=${website.url}`}
                       alt={`${website.name} favicon`}
                     />
                   </div>
